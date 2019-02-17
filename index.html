@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Ezee MT</title>
+		
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<link rel="stylesheet" type="text/css" href="css/font-awesome.css">
+		
+		<!-- Insert this line above script imports  -->
+		<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+		<script src="jquery.js"></script>
+		<!-- Insert this line after script imports -->
+		<script>if (window.module) module = window.module;</script>
+		
+	</head>
+	<body>
+		
+		<div class="screen" id="landing">
+			<div class="vbar">
+				<div class="block">
+					<h2 style="margin-left: 15px;">Your Accounts</h2>
+					<div id="acclist"></div>
+				</div>
+			</div>
+		</div>
+		<div class="screen" id="cn">
+			<div class="vbleft">
+				<div class="block">
+					<button class="btnround" onclick=ss("landing")><i class="fa fa-arrow-left"></i></button>
+				</div>
+			</div>
+			<div class="vbar">
+				<div class="block">
+					<h2>Create New Account</h2>
+					<div><input placeholder="Type a name" id="newaccname"></div>
+					<div><button onclick="savenew()"><i class="fa fa-file-o"></i> Create Now</button></div>
+				</div>
+			</div>
+		</div>
+		<div class="screen" id="resapp">
+			<div class="vbleft" >
+				<div class="block">
+					<button class="btnround" onclick=ss("landing")><i class="fa fa-arrow-left"></i></button>
+				</div>
+			</div>
+			<div class="vbar">
+				<div class="block">
+					<h2>Reset This App</h2>
+					<p>WARNING : By resetting this app you will lose all your data saved in this app. Are you sure?</p>
+					<div><button onclick="resapp()" style="background-color:#e53939;"><i class="fa fa-trash"></i> Yes, reset now</button></div>
+				</div>
+			</div>
+		</div>
+		<div class="screen" id="categories">
+			<div class="vbleft" >
+				<div class="block">
+					<button class="btnround" onclick=ss("landing")><i class="fa fa-arrow-left"></i></button>
+				</div>
+			</div>
+			<div class="vbar">
+				<div class="block">
+					<h2>Categories</h2>
+					<div style="display: inline-block; inline-block; vertical-align: top;">
+						<h3>Incomes</h3>
+						<div id="incatlist"></div>
+						<div><input placeholder="Type a name" id="incat"></div>
+						<div><button onclick="addincat()"><i class="fa fa-file-o"></i> Add Income Category</button></div>
+					</div>
+					<div style="display: inline-block; vertical-align: top; margin-left: 10px; padding-left: 10px; border-left: 1px solid white;">
+						<h3>Expenses</h3>
+						<div id="excatlist"></div>
+						<div><input placeholder="Type a name" id="excat"></div>
+						<div><button onclick="addexcat()"><i class="fa fa-file-o"></i> Add Expense Category</button></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="screen" id="about">
+			<div class="vbleft" >
+				<div class="block">
+					<button class="btnround" onclick=ss("landing")><i class="fa fa-arrow-left"></i></button>
+				</div>
+			</div>
+			<div class="vbar">
+				<div class="block">
+					<h2>About</h2>
+					<p>Ezee Money Tracker is a free personal or small business money management software.</p>
+					<p>Did you ever feel regret when you see you wallet is empty and you don't know where all your money spent? Here this software is made for: to track your expenses.</p>
+					<h2>Disclaimer</h2>
+					<p>I am just a common programmer that love coding something useful for you. I've made this software as good as I could. However I can not guarantee that this software is bug/problem free. Please use this software at your own risk. I'm not responsible for any losses or damages caused by using this software.</p>
+					<h2>Support This Software Development</h2>
+					<p>If you love using this free software, would you please help me to make it better by donating to my PayPal account? Here is the link: <a href="https://www.paypal.me/habibieamrullah">https://www.paypal.me/habibieamrullah</a></p>
+					<h2>Contact me</h2>
+					<p>Should you have any inquiry, please don't hesitate to contact me: <a href="mailto:habibieamrullah@gmail.com">habibieamrullah@gmail.com</a></p>
+				</div>
+			</div>
+		</div>
+		
+		<div id="appalert"></div>
+		<script>
+			function resapp(){
+				localStorage.clear()
+				location.reload()
+			}
+			//resapp()
+			var appdata = {
+				acc : [],
+				catin : [],
+				catex : []
+			}
+			
+			if(localStorage.getItem("appdata") === null){
+				savedata()
+			}else{
+				appdata = JSON.parse(localStorage.getItem("appdata"))
+			}
+			
+			function savedata(){
+				localStorage.setItem("appdata", JSON.stringify(appdata))
+			}
+			
+			function savenew(){
+				var nn = refineinput($("#newaccname").val())
+				if(nn != ""){
+					appdata.acc.push(nn)
+					sAlert("New account created.")
+					savedata()
+					ss("landing")
+				}else{
+					sAlert("Please type a name.")
+				}
+			}
+		
+			function ss(id){
+				$("#newaccname").val("")
+				$(".screen").hide()
+				$("#"+id).show()
+				
+				switch(id){
+					case "landing" :
+						if(appdata.acc.length > 0){
+							data = ""
+							for(var i = 0; i < appdata.acc.length; i++){
+								data += "<div class='accicon'><i class='fa fa-briefcase'></i> " + appdata.acc[i] + "</div>"
+							}
+							$("#acclist").html(data+"<div class='accicon' onclick='ss(\"cn\")'><i class='fa fa-file-o'> </i> Create New Account</div>")
+							break
+						}else{
+							$("#acclist").html("<div class='accicon' onclick='ss(\"cn\")'><i class='fa fa-file-o'> </i> Create New Account</div>")
+						}
+					case "categories" :
+						$("#incat").val("")
+						$("#excat").val("")
+						$("#incatlist").html(function(){
+							if(appdata.catin.length > 0){
+								txt = "";
+								for(var i = 0; i < appdata.catin.length; i++){
+									txt += "<div class='catblock'><i class='fa fa-trash' style='color: red; margin-right: 15px; cursor: pointer;' onclick='delcatin("+i+")'></i>"+appdata.catin[i]+"</div>"
+								}
+								return txt
+							}else
+								return "Please add a category..."
+						})
+						$("#excatlist").html(function(){
+							if(appdata.catex.length > 0){
+								txt = "";
+								for(var i = 0; i < appdata.catex.length; i++){
+									txt += "<div class='catblock'><i class='fa fa-trash' style='color: red; margin-right: 15px; cursor: pointer;' onclick='delcatex("+i+")'></i>"+appdata.catex[i]+"</div>"
+								}
+								return txt
+							}else
+								return "Please add a category..."
+						})
+				}
+			}
+			
+			function addincat(){
+				if(refineinput($("#incat").val()) != ""){
+					appdata.catin.push(refineinput($("#incat").val()));
+					savedata()
+					ss("categories")
+					sAlert("New category added.")
+				}
+			}
+			
+			function delcatin(n){
+				appdata.catin.splice(n, 1);
+				savedata()
+				ss("categories")
+				sAlert("Succesfully emoved.")
+			}
+			
+			function addexcat(){
+				if(refineinput($("#excat").val()) != ""){
+				
+				}
+				appdata.catex.push(refineinput($("#excat").val()));
+				savedata()
+				ss("categories")
+				sAlert("New category added.")
+			}
+			
+			function delcatex(n){
+				appdata.catex.splice(n, 1);
+				savedata()
+				ss("categories")
+				sAlert("Succesfully emoved.")
+			}
+			
+			ss("landing")
+			
+			$(window).resize(function() {
+				resizevbar()
+			})
+			function resizevbar(){
+				$(".vbar").css({ width : (innerWidth-95)+"px" })
+			}
+			resizevbar()
+			
+			function sAlert(x){
+				$("#appalert").html(x).fadeIn(function(){
+					setTimeout(function(){
+						$("#appalert").fadeOut()
+					}, 1500)
+				})
+			}
+			
+			function refineinput(txt){
+				var validtext = ""
+				var numregex = /^([0-9])$/
+				var letterregex = /^[a-zA-Z\-\s]+$/
+				for(var i = 0; i < txt.length; i++){
+					if(!numregex.test(txt[i]) && !letterregex.test(txt[i])){
+						validtext += ""
+					}else{
+						validtext += txt[i]
+					}
+				}
+				return validtext
+			}
+			
+			//electron bridge
+			const { ipcRenderer } = require("electron")
+			ipcRenderer.on("allaccounts", (event, arg)=>{
+				ss("landing")
+			})
+			ipcRenderer.on("createnew", (event, arg)=>{
+				ss("cn")
+			})
+			ipcRenderer.on("resetapp", (event, arg)=>{
+				ss("resapp")
+			})
+			ipcRenderer.on("about", (event, arg)=>{
+				ss("about")
+			})
+			ipcRenderer.on("categories", (event, arg)=>{
+				ss("categories")
+			})
+			
+			const shell = require('electron').shell;
+			// assuming $ is jQuery
+			$(document).on('click', 'a[href^="http"]', function(event) {
+				event.preventDefault();
+				shell.openExternal(this.href);
+			});
+		</script>
+	</body>
+</html>

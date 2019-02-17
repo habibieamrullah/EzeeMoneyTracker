@@ -1,0 +1,20 @@
+{
+  "name": "ezee-money-tracker",
+  "version": "1.0.0",
+  "description": "A free personal money tracker software.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "money",
+    "accounting",
+    "money",
+    "tracking"
+  ],
+  "author": "Habibie",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^4.0.5"
+  }
+}
