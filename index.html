@@ -16,6 +16,17 @@
 	<body>
 		
 		<div class="screen" id="landing">
+			<div class="vbleft">
+				<div class="block" style="padding-bottom: 0;">
+					<button class="btnround" onclick=ss("cn") title="Create New Account"><i class="fa fa-file-o"></i></button>
+				</div>
+				<div class="block" style="padding-bottom: 0;">
+					<button class="btnround" onclick=ss("categories") title="Categories"><i class="fa fa-list"></i></button>
+				</div>
+				<div class="block" style="padding-bottom: 0;">
+					<button class="btnround" onclick=ss("about") title="About"><i class="fa fa-question"></i></button>
+				</div>
+			</div>
 			<div class="vbar">
 				<div class="block">
 					<h2 style="margin-left: 15px;">Your Accounts</h2>
@@ -32,8 +43,33 @@
 			<div class="vbar">
 				<div class="block">
 					<h2>Create New Account</h2>
-					<div><input placeholder="Type a name" id="newaccname"></div>
+					<div>
+						<input placeholder="Type a name" id="newaccname" type="text"><br>
+						<input placeholder="Current balance" id="curaccbal" type="number" value="0"><br>
+						<input placeholder="Currency Symbol" id="cursymbol" type="text" value="$" width="20">
+					</div>
 					<div><button onclick="savenew()"><i class="fa fa-file-o"></i> Create Now</button></div>
+				</div>
+			</div>
+		</div>
+		<div class="screen" id="account">
+			<div class="vbleft">
+				<div class="block" style="padding-bottom: 0;">
+					<button class="btnround" onclick=ss("landing")><i class="fa fa-arrow-left"></i></button>
+				</div>
+				<div class="block" style="padding-bottom: 0;">
+					<button class="btnround" onclick=ss("landing")><i class="fa fa-plus"></i></button>
+				</div>
+				<div class="block" style="padding-bottom: 0;">
+					<button class="btnround" onclick=ss("landing")><i class="fa fa-minus"></i></button>
+				</div>
+				<div class="block" style="padding-bottom: 0;">
+					<button class="btnround" onclick=ss("landing")><i class="fa fa-trash" style='color: red;'></i></button>
+				</div>
+			</div>
+			<div class="vbar">
+				<div class="block">
+					<div id="accountpage"></div>
 				</div>
 			</div>
 		</div>
@@ -89,13 +125,14 @@
 					<h2>Disclaimer</h2>
 					<p>I am just a common programmer that love coding something useful for you. I've made this software as good as I could. However I can not guarantee that this software is bug/problem free. Please use this software at your own risk. I'm not responsible for any losses or damages caused by using this software.</p>
 					<h2>Support This Software Development</h2>
-					<p>If you love using this free software, would you please help me to make it better by donating to my PayPal account? Here is the link: <a href="https://www.paypal.me/habibieamrullah">https://www.paypal.me/habibieamrullah</a></p>
+					<p>I love coding. If you love using this free software, would you please help me to make it better by donating to my PayPal account? So I can still working on what I love to do. Here is the link: <a href="https://www.paypal.me/habibieamrullah">https://www.paypal.me/habibieamrullah</a></p>
 					<h2>Contact me</h2>
 					<p>Should you have any inquiry, please don't hesitate to contact me: <a href="mailto:habibieamrullah@gmail.com">habibieamrullah@gmail.com</a></p>
 				</div>
 			</div>
 		</div>
 		
+		<div id="dimpage"></div>
 		<div id="appalert"></div>
 		<script>
 			function resapp(){
@@ -107,6 +144,12 @@
 				acc : [],
 				catin : [],
 				catex : []
+			}
+			
+			var currentaccount = 0;
+			function openacc(n){
+				currentaccount = n;
+				ss("account")
 			}
 			
 			if(localStorage.getItem("appdata") === null){
@@ -121,8 +164,10 @@
 			
 			function savenew(){
 				var nn = refineinput($("#newaccname").val())
+				var bl = parseFloat(refineinput($("#curaccbal").val()))
+				var sb = $("#cursymbol").val().substring(0,4)
 				if(nn != ""){
-					appdata.acc.push(nn)
+					appdata.acc.push({ name : nn, bal : bl, symb : sb })
 					sAlert("New account created.")
 					savedata()
 					ss("landing")
@@ -132,18 +177,21 @@
 			}
 		
 			function ss(id){
-				$("#newaccname").val("")
 				$(".screen").hide()
 				$("#"+id).show()
 				
 				switch(id){
+					case "cn" :
+						$("#newaccname").val("");
+						$("#curaccbal").val("");
+						$("#cursymbol").val("");
 					case "landing" :
 						if(appdata.acc.length > 0){
 							data = ""
 							for(var i = 0; i < appdata.acc.length; i++){
-								data += "<div class='accicon'><i class='fa fa-briefcase'></i> " + appdata.acc[i] + "</div>"
+								data += "<div class='accicon' onclick='openacc("+i+")'><div style='display: inline-block; margin-right: 10px; vertical-align: top;'><i class='fa fa-briefcase'></i></div><div style='display: inline-block; vertical-align: top;'>" + appdata.acc[i].name + "<br><span style='font-size: 10px;'>"+appdata.acc[i].symb+" "+tsep(appdata.acc[i].bal)+"</span></div></div>"
 							}
-							$("#acclist").html(data+"<div class='accicon' onclick='ss(\"cn\")'><i class='fa fa-file-o'> </i> Create New Account</div>")
+							$("#acclist").html(data)
 							break
 						}else{
 							$("#acclist").html("<div class='accicon' onclick='ss(\"cn\")'><i class='fa fa-file-o'> </i> Create New Account</div>")
@@ -155,7 +203,7 @@
 							if(appdata.catin.length > 0){
 								txt = "";
 								for(var i = 0; i < appdata.catin.length; i++){
-									txt += "<div class='catblock'><i class='fa fa-trash' style='color: red; margin-right: 15px; cursor: pointer;' onclick='delcatin("+i+")'></i>"+appdata.catin[i]+"</div>"
+									txt += "<div class='catblock'><i class='fa fa-trash' style='color: red; cursor: pointer; margin-right: 15px;' title='Delete this category' onclick='delcatin("+i+")'></i><i class='fa fa-pencil' style='margin-right: 15px; cursor: pointer;' title='Edit category\'s name' onclick='editcatin("+i+")'></i>"+appdata.catin[i]+"</div>"
 								}
 								return txt
 							}else
@@ -165,12 +213,14 @@
 							if(appdata.catex.length > 0){
 								txt = "";
 								for(var i = 0; i < appdata.catex.length; i++){
-									txt += "<div class='catblock'><i class='fa fa-trash' style='color: red; margin-right: 15px; cursor: pointer;' onclick='delcatex("+i+")'></i>"+appdata.catex[i]+"</div>"
+									txt += "<div class='catblock'><i class='fa fa-trash' style='color: red; margin-right: 15px; cursor: pointer;' onclick='delcatex("+i+")' title='Delete this category'></i><i class='fa fa-pencil' style='margin-right: 15px; cursor: pointer;' title='Edit category\'s name' onclick='editcatex("+i+")'></i>"+appdata.catex[i]+"</div>"
 								}
 								return txt
 							}else
 								return "Please add a category..."
 						})
+					case "account" :
+						$("#accountpage").html("<h2>"+appdata.acc[currentaccount].name+" <i class='fa fa-pencil-square-o' style='margin-left: 10px; cursor: pointer;' title='Edit' onclick='editaccname("+currentaccount+")'></i></h2><h4>Balance: "+appdata.acc[currentaccount].symb+" "+tsep(appdata.acc[currentaccount].bal)+"</h4></div>")
 				}
 			}
 			
@@ -192,12 +242,11 @@
 			
 			function addexcat(){
 				if(refineinput($("#excat").val()) != ""){
-				
+					appdata.catex.push(refineinput($("#excat").val()));
+					savedata()
+					ss("categories")
+					sAlert("New category added.")
 				}
-				appdata.catex.push(refineinput($("#excat").val()));
-				savedata()
-				ss("categories")
-				sAlert("New category added.")
 			}
 			
 			function delcatex(n){
@@ -205,6 +254,59 @@
 				savedata()
 				ss("categories")
 				sAlert("Succesfully emoved.")
+			}
+			
+			function editcatin(n){
+				var name = appdata.catin[n];
+				$("#dimpage").html("<div class='block'><h2>Edit</h2><div><input placeholder='Type a name' value='"+name+"' id='editedcatname'></div><div><button style='margin-right: 5px;' onclick='closedp()'>Cancel</button><button onclick='updatecatin("+n+")'>Save</button></div></div>").fadeIn();
+			}
+			
+			function updatecatin(n){
+				var newcatname = refineinput($("#editedcatname").val())
+				if(newcatname != ""){
+					appdata.catin[n] = newcatname
+					savedata()
+					ss("categories")
+					$("#dimpage").fadeOut()
+					sAlert("Successfully updated.")
+				}
+			}
+			
+			function editcatex(n){
+				var name = appdata.catex[n];
+				$("#dimpage").html("<div class='block'><h2>Edit</h2><div><input placeholder='Type a name' value='"+name+"' id='editedcatname'></div><div><button style='margin-right: 5px;' onclick='closedp()'>Cancel</button><button onclick='updatecatex("+n+")'>Save</button></div></div>").fadeIn();
+			}
+			
+			function updatecatex(n){
+				var newcatname = refineinput($("#editedcatname").val())
+				if(newcatname != ""){
+					appdata.catex[n] = newcatname;
+					savedata()
+					ss("categories")
+					$("#dimpage").fadeOut()
+					sAlert("Successfully updated.")
+				}
+			}
+			
+			function editaccname(n){
+				$("#dimpage").html("<div class='block'><h2>Edit</h2><div><label>Account Name:</label><br><input placeholder='Type a name' value='"+appdata.acc[n].name+"' id='editedaccname'></div><div><label>Currency Symbol:</label><br><input placeholder='Currency Symbol' value='"+appdata.acc[n].symb+"' id='editedaccsymbol'></div><div><button style='margin-right: 5px;' onclick='closedp()'>Cancel</button><button onclick='updateaccname("+n+")'>Save</button></div></div>").fadeIn()
+			}
+			
+			function updateaccname(n){
+				var newcatname = refineinput($("#editedaccname").val())
+				var newsymbol = $("#editedaccsymbol").val().substring(0,4);
+				if(newcatname != ""){
+					appdata.acc[n].name = newcatname
+					appdata.acc[n].symb = newsymbol
+					savedata()
+					openacc(n)
+					$("#dimpage").fadeOut()
+					sAlert("Successfully updated.")
+				}
+			}
+			
+			function closedp(){
+				$("#dimpage").fadeOut()
 			}
 			
 			ss("landing")
@@ -237,6 +339,10 @@
 					}
 				}
 				return validtext
+			}
+			
+			function tsep(x){
+				return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 			}
 			
 			//electron bridge
