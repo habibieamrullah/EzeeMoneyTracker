@@ -64,7 +64,7 @@
 					<button class="btnround" onclick=ss("landing")><i class="fa fa-minus"></i></button>
 				</div>
 				<div class="block" style="padding-bottom: 0;">
-					<button class="btnround" onclick=ss("landing")><i class="fa fa-trash" style='color: red;'></i></button>
+					<button class="btnround" onclick="delacc()"><i class="fa fa-trash" style='color: red;'></i></button>
 				</div>
 			</div>
 			<div class="vbar">
@@ -152,6 +152,17 @@
 				ss("account")
 			}
 			
+			function delacc(){
+				$("#dimpage").html("<div class='block'><h2>Delete Account</h2><p>Are you sure you are willing to delete this account?</p><div><button style='margin-right: 5px;' onclick='closedp()'>Cancel</button><button onclick='delaccok("+currentaccount+")'>Sure</button></div></div>").fadeIn()
+			}
+			
+			function delaccok(n){
+				appdata.acc.splice(n, 1)
+				savedata()
+				ss("landing")
+				$("#dimpage").fadeOut()
+			}
+			
 			if(localStorage.getItem("appdata") === null){
 				savedata()
 			}else{
@@ -164,7 +175,10 @@
 			
 			function savenew(){
 				var nn = refineinput($("#newaccname").val())
-				var bl = parseFloat(refineinput($("#curaccbal").val()))
+				var bl = $("#curaccbal").val();
+				bl = parseFloat(refineinput(bl))
+				if(isNaN(bl))
+					bl = 0
 				var sb = $("#cursymbol").val().substring(0,4)
 				if(nn != ""){
 					appdata.acc.push({ name : nn, bal : bl, symb : sb })
@@ -185,6 +199,7 @@
 						$("#newaccname").val("");
 						$("#curaccbal").val("");
 						$("#cursymbol").val("");
+						break;
 					case "landing" :
 						if(appdata.acc.length > 0){
 							data = ""
@@ -196,6 +211,7 @@
 						}else{
 							$("#acclist").html("<div class='accicon' onclick='ss(\"cn\")'><i class='fa fa-file-o'> </i> Create New Account</div>")
 						}
+						break;
 					case "categories" :
 						$("#incat").val("")
 						$("#excat").val("")
@@ -219,8 +235,10 @@
 							}else
 								return "Please add a category..."
 						})
+						break;
 					case "account" :
 						$("#accountpage").html("<h2>"+appdata.acc[currentaccount].name+" <i class='fa fa-pencil-square-o' style='margin-left: 10px; cursor: pointer;' title='Edit' onclick='editaccname("+currentaccount+")'></i></h2><h4>Balance: "+appdata.acc[currentaccount].symb+" "+tsep(appdata.acc[currentaccount].bal)+"</h4></div>")
+						break;
 				}
 			}
 			
@@ -330,7 +348,7 @@
 			function refineinput(txt){
 				var validtext = ""
 				var numregex = /^([0-9])$/
-				var letterregex = /^[a-zA-Z\-\s]+$/
+				var letterregex = /^[a-zA-Z\-\s\.]+$/
 				for(var i = 0; i < txt.length; i++){
 					if(!numregex.test(txt[i]) && !letterregex.test(txt[i])){
 						validtext += ""
