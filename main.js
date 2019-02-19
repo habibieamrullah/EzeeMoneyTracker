@@ -2,7 +2,7 @@ const { app, BrowserWindow, Menu } = require('electron')
 
 function createWindow () {
 	// Create the browser window.
-	let win = new BrowserWindow({ width: 800, height: 600 })
+	let win = new BrowserWindow({ width: 1024, height: 720 })
 
 	var menu = Menu.buildFromTemplate([{
 		label: 'Menu',
@@ -43,12 +43,20 @@ function createWindow () {
 	},
 	{
 		label: 'About',
-		submenu: [{
+		submenu: [
+		{
+			label:'Online Help',
+			click(){
+				win.webContents.send("about")
+			}
+		},
+		{
 			label:'About Ezee Money Tracker',
 			click(){
 				win.webContents.send("about")
 			}
-		}],
+		},
+		],
 	}
 	])
 	Menu.setApplicationMenu(menu); 

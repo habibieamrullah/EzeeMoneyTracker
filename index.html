@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Ezee MT</title>
-		
+		<title>Ezee Money Tracker</title>
 		<link rel="stylesheet" type="text/css" href="style.css">
 		<link rel="stylesheet" type="text/css" href="css/font-awesome.css">
-		
 		<!-- Insert this line above script imports  -->
 		<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
 		<script src="jquery.js"></script>
+		
+		<script src="utils.js"></script>
+		<script src="Chart.bundle.js"></script>
 		<!-- Insert this line after script imports -->
 		<script>if (window.module) module = window.module;</script>
 		
@@ -58,13 +59,13 @@
 					<button class="btnround" onclick=ss("landing")><i class="fa fa-arrow-left"></i></button>
 				</div>
 				<div class="block" style="padding-bottom: 0;">
-					<button class="btnround" onclick=ss("landing")><i class="fa fa-plus"></i></button>
+					<button class="btnround" onclick=showit(1) title="Add Income"><i class="fa fa-plus"></i></button>
 				</div>
 				<div class="block" style="padding-bottom: 0;">
-					<button class="btnround" onclick=ss("landing")><i class="fa fa-minus"></i></button>
+					<button class="btnround" onclick=showit(2) title="Add Expense"><i class="fa fa-minus"></i></button>
 				</div>
 				<div class="block" style="padding-bottom: 0;">
-					<button class="btnround" onclick="delacc()"><i class="fa fa-trash" style='color: red;'></i></button>
+					<button class="btnround" onclick="delacc()" title="Delete this Account"><i class="fa fa-trash" style='color: red;'></i></button>
 				</div>
 			</div>
 			<div class="vbar">
@@ -124,14 +125,17 @@
 					<p>Did you ever feel regret when you see you wallet is empty and you don't know where all your money spent? Here this software is made for: to track your expenses.</p>
 					<h2>Disclaimer</h2>
 					<p>I am just a common programmer that love coding something useful for you. I've made this software as good as I could. However I can not guarantee that this software is bug/problem free. Please use this software at your own risk. I'm not responsible for any losses or damages caused by using this software.</p>
+					<h2>Contact</h2>
+					<p>Should you have any inquiry, please don't hesitate to contact me: <a href="mailto:habibie@ciihuy.com">habibie@ciihuy.com</a> or <a href="mailto:habibie@ciihuy.com">habibie@ciihuy.com</a></p>
 					<h2>Support This Software Development</h2>
 					<p>I love coding. If you love using this free software, would you please help me to make it better by donating to my PayPal account? So I can still working on what I love to do. Here is the link: <a href="https://www.paypal.me/habibieamrullah">https://www.paypal.me/habibieamrullah</a></p>
-					<h2>Contact me</h2>
-					<p>Should you have any inquiry, please don't hesitate to contact me: <a href="mailto:habibieamrullah@gmail.com">habibieamrullah@gmail.com</a></p>
+					<p>You can also become my Patron supporter at Patreon:</p>
+					<p align="center"><a href="https://www.patreon.com/ciihuy"><img src="patron.png" width="256"></a></p>
 				</div>
 			</div>
 		</div>
 		
+		<div id="inputtab"><div class="block"><h3>Add <span id="inorex">Income</span><span style="float: right; cursor: pointer;" title="Close" onclick="closeit()"><i class="fa fa-times"></i></span></h3><div id="itcontent"></div></div></div>
 		<div id="dimpage"></div>
 		<div id="appalert"></div>
 		<script>
@@ -150,6 +154,63 @@
 			function openacc(n){
 				currentaccount = n;
 				ss("account")
+			}
+			
+			function closeit(){
+				$("#inputtab").fadeOut()
+			}
+			
+			function showit(n){
+				if(n == 1){
+					if(appdata.catin.length > 0){
+						var cat = "<select id='category'>"
+						for(var i = 0; i < appdata.catin.length; i++){
+							cat += "<option>"+appdata.catin[i]+"</option>"
+						}
+						cat += "</select> or <u style='cursor: pointer;' onclick=ss('categories')>add new</u>"
+						$("#inorex").html("Income")
+						$("#itcontent").html("<div style='display: inline-block; vertical-align: top;'>Enter amount:<br><input id='amount' placeholder='Amount' style='color: black' type='number'><br>Select category:<br>"+cat+"</div><div style='margin-left: 10px; display: inline-block; vertical-align: top;'><textarea id='note' placeholder='Notes' style='color: black;'></textarea><br><button onclick=submitrec(1)>Add</button></div>")
+						$("#inputtab").fadeIn()
+					}else{
+						ss("categories")
+						sAlert("You need to add a category.")
+						$("#inputtab").fadeOut()
+					}
+				}
+				else{
+					if(appdata.catex.length > 0){
+						var cat = "<select id='category'>"
+						for(var i = 0; i < appdata.catex.length; i++){
+							cat += "<option>"+appdata.catex[i]+"</option>"
+						}
+						cat += "</select> or <u style='cursor: pointer;' onclick=ss('categories')>add new</u>"
+						$("#inorex").html("Expense")
+						$("#itcontent").html("<div style='display: inline-block; vertical-align: top;'>Enter amount:<br><input id='amount' placeholder='Amount' style='color: black' type='number'><br>Select category:<br>"+cat+"</div><div style='margin-left: 10px; display: inline-block; vertical-align: top;'><textarea id='note' placeholder='Notes' style='color: black;'></textarea><br><button onclick=submitrec(2)>Add</button></div>")
+						$("#inputtab").fadeIn()
+					}else{
+						ss("categories")
+						sAlert("You need to add a category.")
+					}
+				}
+			}
+			
+			var dt = new Date()
+			
+			function submitrec(n){
+				var amount = parseFloat(refineinput($("#amount").val()))
+				if(!isNaN(amount) && amount != "" && amount != 0){
+					var note = refineinput($("#note").val())
+					var category = $("#category").val()
+					if(n == 1){
+						appdata.acc[currentaccount].tr.push({date : dt.getDate() + "/" + (dt.getMonth()+1) + "/" + dt.getFullYear(), amount : parseFloat(amount), note : note, category : category})
+					}else{
+						appdata.acc[currentaccount].tr.push({date : dt.getDate() + "/" + (dt.getMonth()+1) + "/" + dt.getFullYear(), amount : parseFloat("-"+amount), note : note, category : category})
+					}
+					savedata()
+					openacc(currentaccount)
+				}else{
+					sAlert("Please enter correct amount.")
+				}
 			}
 			
 			function delacc(){
@@ -181,7 +242,7 @@
 					bl = 0
 				var sb = $("#cursymbol").val().substring(0,4)
 				if(nn != ""){
-					appdata.acc.push({ name : nn, bal : bl, symb : sb })
+					appdata.acc.push({ name : nn, bal : bl, symb : sb, tr : [] })
 					sAlert("New account created.")
 					savedata()
 					ss("landing")
@@ -193,25 +254,24 @@
 			function ss(id){
 				$(".screen").hide()
 				$("#"+id).show()
-				
+				$("#inputtab").fadeOut()
 				switch(id){
 					case "cn" :
 						$("#newaccname").val("");
 						$("#curaccbal").val("");
 						$("#cursymbol").val("");
-						break;
+						break
 					case "landing" :
 						if(appdata.acc.length > 0){
 							data = ""
 							for(var i = 0; i < appdata.acc.length; i++){
-								data += "<div class='accicon' onclick='openacc("+i+")'><div style='display: inline-block; margin-right: 10px; vertical-align: top;'><i class='fa fa-briefcase'></i></div><div style='display: inline-block; vertical-align: top;'>" + appdata.acc[i].name + "<br><span style='font-size: 10px;'>"+appdata.acc[i].symb+" "+tsep(appdata.acc[i].bal)+"</span></div></div>"
+								data += "<div class='accicon' onclick='openacc("+i+")'><div style='display: inline-block; margin-right: 10px; vertical-align: top;'><i class='fa fa-briefcase'></i></div><div style='display: inline-block; vertical-align: top;'>" + appdata.acc[i].name + "<br><span style='font-size: 10px;'>"+tsep(i, getbalance(i))+"</span></div></div>"
 							}
 							$("#acclist").html(data)
-							break
 						}else{
 							$("#acclist").html("<div class='accicon' onclick='ss(\"cn\")'><i class='fa fa-file-o'> </i> Create New Account</div>")
 						}
-						break;
+						break
 					case "categories" :
 						$("#incat").val("")
 						$("#excat").val("")
@@ -235,11 +295,223 @@
 							}else
 								return "Please add a category..."
 						})
-						break;
+						break
 					case "account" :
-						$("#accountpage").html("<h2>"+appdata.acc[currentaccount].name+" <i class='fa fa-pencil-square-o' style='margin-left: 10px; cursor: pointer;' title='Edit' onclick='editaccname("+currentaccount+")'></i></h2><h4>Balance: "+appdata.acc[currentaccount].symb+" "+tsep(appdata.acc[currentaccount].bal)+"</h4></div>")
-						break;
+						$("#accountpage").html("<div><h2>"+appdata.acc[currentaccount].name+" <i class='fa fa-pencil-square-o' style='margin-left: 10px; cursor: pointer;' title='Edit' onclick='editaccname("+currentaccount+")'></i></h2><h4>Balance: "+tsep(currentaccount, getbalance(currentaccount))+"</h4><div id='transactions' style='display: inline-block; vertical-align: top;'></div><div id='monthselector' style='margin-left: 10px; padding-left: 10px; display: inline-block; vertical-align: top;'></div></div></div><div style='margin-top: 20px;'><div class='chartblock'><p>Incomes</p><canvas id='chartincomes'></canvas></div><div class='chartblock'><p>Expenses</p><canvas id='chartexpenses'></canvas></div></div>")
+						showtrans(parseInt(dt.getFullYear()), parseInt(dt.getMonth())+1)
+						$("#monthselector").html(fetchmonths())
+						break
 				}
+			}
+			
+			function fetchmonths(){
+				var data = "<p>Month List</p>"
+				if(appdata.acc[currentaccount].tr.length > 0){
+					var currentmonth = -1
+					for(var i = appdata.acc[currentaccount].tr.length-1; i > -1; i--){
+						if(appdata.acc[currentaccount].tr[i].date.split("/")[1] != currentmonth){
+							currentmonth = appdata.acc[currentaccount].tr[i].date.split("/")[1]
+							data += "<div class='monthblock' onclick=showtrans("+appdata.acc[currentaccount].tr[i].date.split("/")[2]+","+currentmonth+")>"+appdata.acc[currentaccount].tr[i].date.split("/")[2]+" - "+mname(currentmonth) + "</div>"
+						}
+					}
+				}else{
+					data += "<div style='font-size: 10px;'>Nothing to show</div>"
+				}
+				return data;
+			}
+			
+			function mname(t){
+				switch(t){
+					case "1" :
+						return "January"
+						break
+					case "2" :
+						return "February"
+						break
+					case "3" :
+						return "March"
+						break
+					case "4" :
+						return "April"
+						break
+					case "5" :
+						return "May"
+						break
+					case "6" :
+						return "June"
+						break
+					case "7" :
+						return "July"
+						break
+					case "8" :
+						return "August"
+						break
+					case "9" :
+						return "September"
+						break
+					case "10" :
+						return "October"
+						break
+					case "11" :
+						return "November"
+						break
+					case "12" :
+						return "December"
+						break
+				}
+			}
+			
+			function showtrans(y, m){
+				if(appdata.acc[currentaccount].tr.length > 0){
+				
+					var statdata = { in : [] , ex : [] }
+				
+					var data = "<p>"+mname(m.toString()) + " " + y.toString() + " Transactions"+"</p><table><tr><th>Date</th><th>Category</th><th>Amount</th><th>Notes</th></tr>"
+					
+					function notexist(dat, cat){
+						if(dat.length > 0){
+							for(var i = 0; i < dat.length; i++){
+								if(dat[i].name == cat)
+									return false
+							}
+							return true;
+						}else{
+							return true
+						}
+					}
+					
+					for(var i = appdata.acc[currentaccount].tr.length-1; i > -1; i--){
+						if(appdata.acc[currentaccount].tr[i].date.split("/")[2] == y.toString() && appdata.acc[currentaccount].tr[i].date.split("/")[1] == m.toString()){
+							data += "<tr><td>"+appdata.acc[currentaccount].tr[i].date+"</td><td>"+appdata.acc[currentaccount].tr[i].category+"</td><td style='text-align: right;'>"+tsep(currentaccount, appdata.acc[currentaccount].tr[i].amount)+"</td><td>"+appdata.acc[currentaccount].tr[i].note+"</td></tr>"
+							
+							if(appdata.acc[currentaccount].tr[i].amount > 0){
+								if(notexist(statdata.in, appdata.acc[currentaccount].tr[i].category)){
+									statdata.in.push({ name : appdata.acc[currentaccount].tr[i].category , amount : [] })
+									statdata.in[statdata.in.length-1].amount.push(appdata.acc[currentaccount].tr[i].amount)
+								}else{
+									for(var x = 0; x < statdata.in.length; x++){
+										if(statdata.in[x].name == appdata.acc[currentaccount].tr[i].category)
+											statdata.in[x].amount.push(appdata.acc[currentaccount].tr[i].amount)
+									}
+								}
+							}else{
+								if(notexist(statdata.ex, appdata.acc[currentaccount].tr[i].category)){
+									statdata.ex.push({ name : appdata.acc[currentaccount].tr[i].category , amount : [] })
+									statdata.ex[statdata.ex.length-1].amount.push(appdata.acc[currentaccount].tr[i].amount)
+								}else{
+									for(var x = 0; x < statdata.ex.length; x++){
+										if(statdata.ex[x].name == appdata.acc[currentaccount].tr[i].category)
+											statdata.ex[x].amount.push(appdata.acc[currentaccount].tr[i].amount)
+									}
+								}
+							}
+							
+						}
+					}
+					$("#transactions").html(data + "</table>")
+					
+					var dataamntin = []
+					var bgcol = []
+					for(var z = 0; z < statdata.in.length; z++){
+						var dataamntinttl = 0
+						for(var y = 0; y < statdata.in[z].amount.length; y++)
+							dataamntinttl+= statdata.in[z].amount[y]
+						dataamntin.push(dataamntinttl)
+					}
+					var dynamicColors = function() {
+						var r = Math.floor(Math.random() * 255);
+						var g = Math.floor(Math.random() * 255);
+						var b = Math.floor(Math.random() * 255);
+						return "rgb(" + r + "," + g + "," + b + ")";
+					};
+					var datalblin = []
+					for(var z = 0; z < statdata.in.length; z++){
+						datalblin.push(statdata.in[z].name)
+						bgcol.push(dynamicColors())
+					}
+					
+					var configin = {
+						type: 'pie',
+						data: {
+							datasets: [{
+								data: dataamntin,
+								backgroundColor: bgcol,
+								label: 'Incomes',
+							}],
+							labels: datalblin
+						},
+						options: {
+							legend: {
+								labels: {
+									fontColor: "white",
+								}
+							},
+							responsive: true,
+						}
+					};
+					
+					
+					var ctx = document.getElementById('chartincomes').getContext('2d');
+					window.myPie = new Chart(ctx, configin);
+					
+					var dataamntex = []
+					var bgcol = []
+					for(var z = 0; z < statdata.ex.length; z++){
+						var dataamntexttl = 0
+						for(var y = 0; y < statdata.ex[z].amount.length; y++)
+							dataamntexttl+= statdata.ex[z].amount[y]
+						dataamntex.push(dataamntexttl)
+					}
+					
+					var datalblex = []
+					for(var z = 0; z < statdata.ex.length; z++){
+						datalblex.push(statdata.ex[z].name)
+						bgcol.push(dynamicColors())
+					}
+					
+					var configex = {
+						type: 'pie',
+						data: {
+							datasets: [{
+								data: dataamntex,
+								backgroundColor: bgcol,
+								label: 'Expenses',
+							}],
+							labels: datalblex
+						},
+						options: {
+							legend: {
+								labels: {
+									fontColor: "white",
+								}
+							},
+							responsive: true,
+						}
+					};
+					
+					
+					var ctx = document.getElementById('chartexpenses').getContext('2d');
+					window.myPie = new Chart(ctx, configex);
+		
+				}else{
+					$("#transactions").html("<p>"+currentymtitle()+"</p><div style='font-size: 10px;'>Nothing to show</div>")
+				}
+			}
+			
+			function randcol(){
+				return '#'+Math.floor(Math.random()*16777215).toString(16)
+			}
+			
+			function currentymtitle(){
+				return mname((dt.getMonth()+1).toString()) + " " + dt.getFullYear() + " Transactions"
+			}
+			
+			function getbalance(n){
+				var balance = appdata.acc[n].bal
+				for(var i = 0; i < appdata.acc[n].tr.length; i++){
+					balance += appdata.acc[n].tr[i].amount
+				}
+				return balance
 			}
 			
 			function addincat(){
@@ -248,6 +520,8 @@
 					savedata()
 					ss("categories")
 					sAlert("New category added.")
+				}else{
+					sAlert("Type a category.")
 				}
 			}
 			
@@ -264,6 +538,8 @@
 					savedata()
 					ss("categories")
 					sAlert("New category added.")
+				}else{
+					sAlert("Type a category.")
 				}
 			}
 			
@@ -282,6 +558,7 @@
 			function updatecatin(n){
 				var newcatname = refineinput($("#editedcatname").val())
 				if(newcatname != ""){
+					updatecatonrec(appdata.catin[n], newcatname)
 					appdata.catin[n] = newcatname
 					savedata()
 					ss("categories")
@@ -298,12 +575,23 @@
 			function updatecatex(n){
 				var newcatname = refineinput($("#editedcatname").val())
 				if(newcatname != ""){
+					updatecatonrec(appdata.catex[n], newcatname)
 					appdata.catex[n] = newcatname;
 					savedata()
 					ss("categories")
 					$("#dimpage").fadeOut()
 					sAlert("Successfully updated.")
 				}
+			}
+			
+			function updatecatonrec(o, n){
+				for(var i = 0; i < appdata.acc.length; i++){
+					for(var z = 0; z < appdata.acc[i].tr.length; z++){
+						if(appdata.acc[i].tr[z].category == o)
+							appdata.acc[i].tr[z].category = n
+					}
+				}
+				savedata()
 			}
 			
 			function editaccname(n){
@@ -338,7 +626,7 @@
 			resizevbar()
 			
 			function sAlert(x){
-				$("#appalert").html(x).fadeIn(function(){
+				$("#appalert").hide().html(x).fadeIn(function(){
 					setTimeout(function(){
 						$("#appalert").fadeOut()
 					}, 1500)
@@ -359,8 +647,12 @@
 				return validtext
 			}
 			
-			function tsep(x){
-				return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+			function tsep(s, x){
+				am = x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+				if(am.indexOf("-") > -1)
+					return "<span style='color: orange'>" + am.replace("-", "-"+appdata.acc[s].symb+" ") + "</span>"
+				else
+					return appdata.acc[s].symb + " " + am
 			}
 			
 			//electron bridge
@@ -380,6 +672,7 @@
 			ipcRenderer.on("categories", (event, arg)=>{
 				ss("categories")
 			})
+			
 			
 			const shell = require('electron').shell;
 			// assuming $ is jQuery
