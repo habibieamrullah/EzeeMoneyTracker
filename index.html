@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>Ezee Money Tracker</title>
-		<link rel="stylesheet" type="text/css" href="style.css">
+		<link id="appstyle" rel="stylesheet" type="text/css" href="style1.css">
 		<link rel="stylesheet" type="text/css" href="css/font-awesome.css">
 		<!-- Insert this line above script imports  -->
 		<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
@@ -23,6 +23,9 @@
 				</div>
 				<div class="block" style="padding-bottom: 0;">
 					<button class="btnround" onclick=ss("categories") title="Categories"><i class="fa fa-list"></i></button>
+				</div>
+				<div class="block" style="padding-bottom: 0;">
+					<button class="btnround" onclick=ss("backrest") title="Backup and Restore"><i class="fa fa-floppy-o"></i></button>
 				</div>
 				<div class="block" style="padding-bottom: 0;">
 					<button class="btnround" onclick=ss("about") title="About"><i class="fa fa-question"></i></button>
@@ -74,6 +77,22 @@
 				</div>
 			</div>
 		</div>
+		<div class="screen" id="backrest">
+			<div class="vbleft" >
+				<div class="block">
+					<button class="btnround" onclick=ss("landing")><i class="fa fa-arrow-left"></i></button>
+				</div>
+			</div>
+			<div class="vbar">
+				<div class="block">
+					<h2>Backup and Restore</h2>
+					<p>Export your data as a backup file by clicking Backup button.</p>
+					<div><button onclick="saveb()"><i class="fa fa-download"></i> Backup</button></div>
+					<p>Click Restore button if you have made a backup earlier.</p>
+					<div><button onclick="sofd()"><i class="fa fa-upload"></i> Restore</button></div>
+				</div>
+			</div>
+		</div>
 		<div class="screen" id="resapp">
 			<div class="vbleft" >
 				<div class="block">
@@ -85,6 +104,20 @@
 					<h2>Reset This App</h2>
 					<p>WARNING : By resetting this app you will lose all your data saved in this app. Are you sure?</p>
 					<div><button onclick="resapp()" style="background-color:#e53939;"><i class="fa fa-trash"></i> Yes, reset now</button></div>
+				</div>
+			</div>
+		</div>
+		<div class="screen" id="help">
+			<div class="vbleft" >
+				<div class="block">
+					<button class="btnround" onclick=ss("landing")><i class="fa fa-arrow-left"></i></button>
+				</div>
+			</div>
+			<div class="vbar">
+				<div class="block">
+					<h2>Help</h2>
+					<p>Here is a video introducing and demonstrating how to use this program:</p>
+					<iframe width="560" height="315" src="https://www.youtube.com/embed/TwQ44UJiSIs" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 				</div>
 			</div>
 		</div>
@@ -126,10 +159,10 @@
 					<h2>Disclaimer</h2>
 					<p>I am just a common programmer that love coding something useful for you. I've made this software as good as I could. However I can not guarantee that this software is bug/problem free. Please use this software at your own risk. I'm not responsible for any losses or damages caused by using this software.</p>
 					<h2>Contact</h2>
-					<p>Should you have any inquiry, please don't hesitate to contact me: <a href="mailto:habibie@ciihuy.com">habibie@ciihuy.com</a> or <a href="mailto:habibie@ciihuy.com">habibie@ciihuy.com</a></p>
+					<p>Should you have any inquiry, please don't hesitate to contact me: <a href="mailto:habibie@ciihuy.com">habibie@ciihuy.com</a> or <a href="mailto:habibieamrullah@gmail.com">habibieamrullah@gmail.com</a></p>
 					<h2>Support This Software Development</h2>
 					<p>I love coding. If you love using this free software, would you please help me to make it better by donating to my PayPal account? So I can still working on what I love to do. Here is the link: <a href="https://www.paypal.me/habibieamrullah">https://www.paypal.me/habibieamrullah</a></p>
-					<p>You can also become my Patron supporter at Patreon:</p>
+					<p>You can also become my Patron supporter at Patreon. Please click button below:</p>
 					<p align="center"><a href="https://www.patreon.com/ciihuy"><img src="patron.png" width="256"></a></p>
 				</div>
 			</div>
@@ -144,10 +177,12 @@
 				location.reload()
 			}
 			//resapp()
+			
 			var appdata = {
 				acc : [],
 				catin : [],
-				catex : []
+				catex : [],
+				theme : 1
 			}
 			
 			var currentaccount = 0;
@@ -169,7 +204,7 @@
 						}
 						cat += "</select> or <u style='cursor: pointer;' onclick=ss('categories')>add new</u>"
 						$("#inorex").html("Income")
-						$("#itcontent").html("<div style='display: inline-block; vertical-align: top;'>Enter amount:<br><input id='amount' placeholder='Amount' style='color: black' type='number'><br>Select category:<br>"+cat+"</div><div style='margin-left: 10px; display: inline-block; vertical-align: top;'><textarea id='note' placeholder='Notes' style='color: black;'></textarea><br><button onclick=submitrec(1)>Add</button></div>")
+						$("#itcontent").html("<div style='display: inline-block; vertical-align: top;'>Enter amount:<br><input id='amount' placeholder='Amount' style='color: gray' type='number'><br>Select category:<br>"+cat+"</div><div style='margin-left: 10px; display: inline-block; vertical-align: top;'><textarea id='note' placeholder='Notes' style='color: gray;'></textarea><br><button onclick=submitrec(1)>Add</button></div>")
 						$("#inputtab").fadeIn()
 					}else{
 						ss("categories")
@@ -185,7 +220,7 @@
 						}
 						cat += "</select> or <u style='cursor: pointer;' onclick=ss('categories')>add new</u>"
 						$("#inorex").html("Expense")
-						$("#itcontent").html("<div style='display: inline-block; vertical-align: top;'>Enter amount:<br><input id='amount' placeholder='Amount' style='color: black' type='number'><br>Select category:<br>"+cat+"</div><div style='margin-left: 10px; display: inline-block; vertical-align: top;'><textarea id='note' placeholder='Notes' style='color: black;'></textarea><br><button onclick=submitrec(2)>Add</button></div>")
+						$("#itcontent").html("<div style='display: inline-block; vertical-align: top;'>Enter amount:<br><input id='amount' placeholder='Amount' style='color: gray' type='number'><br>Select category:<br>"+cat+"</div><div style='margin-left: 10px; display: inline-block; vertical-align: top;'><textarea id='note' placeholder='Notes' style='color: gray;'></textarea><br><button onclick=submitrec(2)>Add</button></div>")
 						$("#inputtab").fadeIn()
 					}else{
 						ss("categories")
@@ -225,9 +260,18 @@
 			}
 			
 			if(localStorage.getItem("appdata") === null){
+				appdata = JSON.parse('{"acc":[{"name":"Family","bal":0,"symb":"$","tr":[{"date":"19/2/2019","amount":2500,"note":"Salary","category":"Salary"},{"date":"19/2/2019","amount":300,"note":"","category":"Bonuses"},{"date":"19/2/2019","amount":-240,"note":"","category":"Groceries"},{"date":"19/2/2019","amount":-120,"note":"Bill paid","category":"Electricity"}]}],"catin":["Salary","Bonuses"],"catex":["Groceries","Drinks","Snacks","Vacation","Electricity","Water","Gas"],"theme":1}')
 				savedata()
 			}else{
 				appdata = JSON.parse(localStorage.getItem("appdata"))
+			}
+			
+			setTheme(appdata.theme)
+			
+			function setTheme(n){
+				$("#appstyle").attr({ href : "style"+n+".css"})
+				appdata.theme = n
+				savedata()
 			}
 			
 			function savedata(){
@@ -297,7 +341,7 @@
 						})
 						break
 					case "account" :
-						$("#accountpage").html("<div><h2>"+appdata.acc[currentaccount].name+" <i class='fa fa-pencil-square-o' style='margin-left: 10px; cursor: pointer;' title='Edit' onclick='editaccname("+currentaccount+")'></i></h2><h4>Balance: "+tsep(currentaccount, getbalance(currentaccount))+"</h4><div id='transactions' style='display: inline-block; vertical-align: top;'></div><div id='monthselector' style='margin-left: 10px; padding-left: 10px; display: inline-block; vertical-align: top;'></div></div></div><div style='margin-top: 20px;'><div class='chartblock'><p>Incomes</p><canvas id='chartincomes'></canvas></div><div class='chartblock'><p>Expenses</p><canvas id='chartexpenses'></canvas></div></div>")
+						$("#accountpage").html("<div><h2>"+appdata.acc[currentaccount].name+" <i class='fa fa-pencil-square-o' style='margin-left: 10px; cursor: pointer;' title='Edit' onclick='editaccname("+currentaccount+")'></i></h2><h4>Balance: "+tsep(currentaccount, getbalance(currentaccount))+"</h4><div id='transactions' style='display: inline-block; vertical-align: top; margin-right: 10px; padding-right: 10px; margin-bottom: 10px;'></div><div id='monthselector' style='display: inline-block; vertical-align: top; margin-bottom: 10px;'></div></div></div><div style='margin-top: 20px;'><div class='chartblock'><p>Incomes</p><canvas id='chartincomes'></canvas></div><div class='chartblock'><p>Expenses</p><canvas id='chartexpenses'></canvas></div></div>")
 						showtrans(parseInt(dt.getFullYear()), parseInt(dt.getMonth())+1)
 						$("#monthselector").html(fetchmonths())
 						break
@@ -366,7 +410,7 @@
 				
 					var statdata = { in : [] , ex : [] }
 				
-					var data = "<p>"+mname(m.toString()) + " " + y.toString() + " Transactions"+"</p><table><tr><th>Date</th><th>Category</th><th>Amount</th><th>Notes</th></tr>"
+					var data = "<p>"+mname(m.toString()) + " " + y.toString() + " Activities"+"</p><table><tr><th>Date</th><th>Category</th><th>Amount</th><th>Notes</th></tr>"
 					
 					function notexist(dat, cat){
 						if(dat.length > 0){
@@ -380,11 +424,16 @@
 						}
 					}
 					
+					var totin = 0;
+					var totex = 0;
+					
 					for(var i = appdata.acc[currentaccount].tr.length-1; i > -1; i--){
+					
 						if(appdata.acc[currentaccount].tr[i].date.split("/")[2] == y.toString() && appdata.acc[currentaccount].tr[i].date.split("/")[1] == m.toString()){
 							data += "<tr><td>"+appdata.acc[currentaccount].tr[i].date+"</td><td>"+appdata.acc[currentaccount].tr[i].category+"</td><td style='text-align: right;'>"+tsep(currentaccount, appdata.acc[currentaccount].tr[i].amount)+"</td><td>"+appdata.acc[currentaccount].tr[i].note+"</td></tr>"
 							
 							if(appdata.acc[currentaccount].tr[i].amount > 0){
+								totin += appdata.acc[currentaccount].tr[i].amount
 								if(notexist(statdata.in, appdata.acc[currentaccount].tr[i].category)){
 									statdata.in.push({ name : appdata.acc[currentaccount].tr[i].category , amount : [] })
 									statdata.in[statdata.in.length-1].amount.push(appdata.acc[currentaccount].tr[i].amount)
@@ -395,6 +444,7 @@
 									}
 								}
 							}else{
+								totex += appdata.acc[currentaccount].tr[i].amount
 								if(notexist(statdata.ex, appdata.acc[currentaccount].tr[i].category)){
 									statdata.ex.push({ name : appdata.acc[currentaccount].tr[i].category , amount : [] })
 									statdata.ex[statdata.ex.length-1].amount.push(appdata.acc[currentaccount].tr[i].amount)
@@ -408,7 +458,7 @@
 							
 						}
 					}
-					$("#transactions").html(data + "</table>")
+					$("#transactions").html(data + "</table><div style='text-align: right; font-size: 12px; padding-top: 10px;'>Total incomes: "+tsep(currentaccount, totin)+"<br>Total Expenses: "+tsep(currentaccount, totex)+"<br>Balance: "+tsep(currentaccount, totin+totex)+"</div>")
 					
 					var dataamntin = []
 					var bgcol = []
@@ -436,6 +486,7 @@
 							datasets: [{
 								data: dataamntin,
 								backgroundColor: bgcol,
+								hoverBackgroundColor: bgcol,
 								label: 'Incomes',
 							}],
 							labels: datalblin
@@ -447,6 +498,9 @@
 								}
 							},
 							responsive: true,
+							animation: {
+								duration: 0
+							}
 						}
 					};
 					
@@ -475,6 +529,7 @@
 							datasets: [{
 								data: dataamntex,
 								backgroundColor: bgcol,
+								hoverBackgroundColor: bgcol,
 								label: 'Expenses',
 							}],
 							labels: datalblex
@@ -484,6 +539,9 @@
 								labels: {
 									fontColor: "white",
 								}
+							},
+							animation: {
+								duration: 0
 							},
 							responsive: true,
 						}
@@ -503,7 +561,7 @@
 			}
 			
 			function currentymtitle(){
-				return mname((dt.getMonth()+1).toString()) + " " + dt.getFullYear() + " Transactions"
+				return mname((dt.getMonth()+1).toString()) + " " + dt.getFullYear() + " Activities"
 			}
 			
 			function getbalance(n){
@@ -672,7 +730,65 @@
 			ipcRenderer.on("categories", (event, arg)=>{
 				ss("categories")
 			})
+			ipcRenderer.on("backrest", (event, arg)=>{
+				ss("backrest")
+			})
+			ipcRenderer.on("ctheme", (event, arg)=>{
+				setTheme(arg)
+			})
+			ipcRenderer.on("help", (event, arg)=>{
+				ss("help")
+			})
 			
+			const { dialog } = require('electron').remote
+			function sofd(){
+				dialog.showOpenDialog({
+					filters: [{ name: 'EMT', extensions: ['emt'] }],
+					properties: ['openFile']
+				}, function (files) {
+					if (files !== undefined) {
+						var filelocation = files.toString()
+						var fs = require('fs')
+						fs.readFile(filelocation, function(err, buf) {
+							if(err){
+								sAlert("Invalid file.")
+							}else{
+								var newdata = JSON.parse(buf.toString())
+								if(newdata.acc !== undefined){
+									appdata = newdata
+									savedata()
+									sAlert("Data succesfully restored.")
+									setTimeout(function(){
+										location.reload()
+									}, 2000)
+								}else{
+									sAlert("Invalid file.")
+								}
+							}
+						});
+					}
+				});
+			}
+			
+			function saveb(){
+				dialog.showSaveDialog({
+					filters: [{ name: 'EMT', extensions: ['emt'] }]
+				}, function (files) {
+					if (files !== undefined) {
+						var filelocation = files.toString()
+						var fs = require('fs')
+						
+						fs.writeFile(filelocation, JSON.stringify(appdata), function(err, data) {
+							if(err){
+								sAlert("The file can't be saved.");
+							}
+							else{
+								sAlert("Succesfully backed up.");
+							}
+						});
+					}
+				});
+			}
 			
 			const shell = require('electron').shell;
 			// assuming $ is jQuery

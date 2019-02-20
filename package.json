@@ -12,8 +12,12 @@
     "money",
     "tracking"
   ],
+  "scripts": {
+    "package-win": "electron-packager . ezee-money-tracker --overwrite --asar=true --platform=win32 --arch=ia32 --icon=icon.ico",
+	"package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=icon.icns --prune=true --out=release-builds"
+  },
   "author": "Habibie",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "electron": "^4.0.5"
   }

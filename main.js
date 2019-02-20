@@ -34,8 +34,50 @@ function createWindow () {
 	},
 	{
 		label: 'Settings',
-		submenu: [{
-			label:'Reset This App',
+		submenu: [
+		{
+			label:'Themes',
+			submenu: [
+				{
+					label : 'Default',
+					click(){
+						win.webContents.send("ctheme", 1)
+					}
+				},
+				{
+					label : 'Redish',
+					click(){
+						win.webContents.send("ctheme", 2)
+					}
+				},
+				{
+					label : 'Nature',
+					click(){
+						win.webContents.send("ctheme", 3)
+					}
+				},
+				{
+					label : 'Dark Knight',
+					click(){
+						win.webContents.send("ctheme", 4)
+					}
+				},
+				{
+					label : 'Kidmatrix',
+					click(){
+						win.webContents.send("ctheme", 5)
+					}
+				},
+			]
+		},
+		{
+			label:'Backup and Restore',
+			click(){
+				win.webContents.send("backrest")
+			}
+		},
+		{
+			label:'Reset This Program',
 			click(){
 				win.webContents.send("resetapp")
 			}
@@ -45,9 +87,9 @@ function createWindow () {
 		label: 'About',
 		submenu: [
 		{
-			label:'Online Help',
+			label:'Help',
 			click(){
-				win.webContents.send("about")
+				win.webContents.send("help")
 			}
 		},
 		{
@@ -68,3 +110,4 @@ app.on('ready', createWindow)
 app.on('window-all-closed', () => {
   app.quit()
 })
+

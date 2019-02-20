@@ -1,0 +1,213 @@
+@font-face{
+	font-family: 'lato';
+	src: url('lato.ttf');
+}
+
+body{
+	font-family: lato;
+	background-color: #ab0606;
+	color: white;
+	padding: 0;
+	margin: 0;
+}
+
+a{
+	color: lime;
+	text-decoration: underline;
+}
+a:hover{
+	text-decoration: none;
+}
+
+:not(input):not(textarea),
+:not(input):not(textarea)::after,
+:not(input):not(textarea)::before {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+h1, h2, h3, h4, h5, p{
+	margin: 0;
+	margin-bottom: 10px;
+}
+
+.screen{
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+button{
+	padding: 10px;
+	border: 1px solid white;
+	color: white;
+	background-color: #ab0606;
+	outline: none;
+	cursor: pointer;
+	margin-bottom: 10px;
+}
+
+button:hover{
+	background-color: white;
+	color: #ab0606;
+	border: 1px solid #ab0606;
+	-webkit-transition: background-color 0.5s; 
+	transition: background-color 0.5s;
+}
+
+input{
+	border: none;
+	background-color: inherit;
+	outline: none;
+	border-bottom: 1px solid #f9495e;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	margin-bottom: 10px;
+	color: white;
+}
+
+input::placeholder{
+	color: #f9495e;
+}
+
+input:focus{
+	border-bottom: 1px solid white;
+}
+
+textarea{
+	border: none;
+	background-color: inherit;
+	outline: none;
+	border: 1px solid #f9495e;
+	padding: 5px;
+	color: white;
+	font-family: lato;
+	resize: none;
+}
+
+select{
+	padding: 5px;
+	outline: none;
+	border: 1px solid #f9495e;
+	margin-top: 10px;
+}
+
+.btnround{
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	text-align: center;
+	padding: 5px;
+	vertical-align: center;
+	border: none;
+}
+
+#appalert{
+	display: none;
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	padding: 5px;
+	background-color: black;
+	color: white;
+	font-size: 10px;
+}
+
+.vbar{
+	display: inline-block; height: 100%; vertical-align: top; overflow-y: auto;
+	background-image: url("bg2.png");
+	
+	/* Center and scale the image nicely */
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+.vbleft{
+	display: inline-block; height: 100%; vertical-align: top; overflow-y: auto;
+	background-color: #750000; 
+}
+
+.accicon{
+	display: inline-block;
+	padding: 15px;
+	cursor: pointer;
+}
+.accicon:hover{
+	background-color: white;
+	color: #ab0606;
+	-webkit-transition: background-color 0.5s; 
+	transition: background-color 0.5s;
+}
+
+.block{
+	padding: 20px;
+}
+
+.catblock{
+	padding: 5px;
+	margin-bottom: 5px;
+	border: 1px solid white;
+}
+
+.catblock:hover{
+	background-color: white;
+	color: #ab0606;
+	transition: background-color 0.5s;
+}
+
+#dimpage{
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, .75);
+	display: none;
+	padding: 50px;
+}
+
+#inputtab{
+	position: fixed;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(255, 255, 255, .85);
+	color: #ab0606;
+	display: none;
+	margin: 10px;
+}
+
+table {
+	border-collapse: collapse; font-size: 12px; width: 100%;
+}
+
+th{
+	background-color: white; color: black; border: 1px solid white; padding: 10px;
+}
+
+td{
+	border: 1px solid white; padding: 10px;
+}
+
+.monthblock{
+	border-left : 3px solid #f9495e;
+	cursor: pointer;
+	padding: 5px;
+	padding-left: 10px;
+}
+
+.monthblock:hover{
+	border-left: 5px solid white;
+}
+
+.chartblock{
+	display: inline-block; vertical-align: top;
+	width: 300px;
+}
+
+#transactions{
+	width: 70%;
+	overflow: auto;
+}
