@@ -84,7 +84,6 @@ textarea{
 	padding: 5px;
 	color: #e1f0ff;
 	font-family: lato;
-	resize: none;
 }
 
 select{
@@ -108,10 +107,9 @@ select{
 	position: fixed;
 	left: 0;
 	bottom: 0;
-	padding: 5px;
+	padding: 20px;
 	background-color: black;
 	color: white;
-	font-size: 10px;
 }
 
 .vbar{

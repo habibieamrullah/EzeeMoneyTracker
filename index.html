@@ -62,10 +62,13 @@
 					<button class="btnround" onclick=ss("landing")><i class="fa fa-arrow-left"></i></button>
 				</div>
 				<div class="block" style="padding-bottom: 0;">
-					<button class="btnround" onclick=showit(1) title="Add Income"><i class="fa fa-plus"></i></button>
+					<button class="btnround" onclick=showit(1) title="Earn"><i class="fa fa-plus"></i></button>
 				</div>
 				<div class="block" style="padding-bottom: 0;">
-					<button class="btnround" onclick=showit(2) title="Add Expense"><i class="fa fa-minus"></i></button>
+					<button class="btnround" onclick=showit(2) title="Spend"><i class="fa fa-minus"></i></button>
+				</div>
+				<div class="block" style="padding-bottom: 0;">
+					<button class="btnround" onclick=showit(3) title="Transfer"><i class="fa fa-arrows-h"></i></button>
 				</div>
 				<div class="block" style="padding-bottom: 0;">
 					<button class="btnround" onclick="delacc()" title="Delete this Account"><i class="fa fa-trash" style='color: red;'></i></button>
@@ -145,6 +148,33 @@
 				</div>
 			</div>
 		</div>
+		<div class="screen" id="vinfo">
+			<div class="vbleft" >
+				<div class="block">
+					<button class="btnround" onclick=ss("landing")><i class="fa fa-arrow-left"></i></button>
+				</div>
+			</div>
+			<div class="vbar">
+				<div class="block">
+					<h2>Version Info</h2>
+					<div style="display: inline-block; inline-block; vertical-align: top;">
+						<p><img src="icon.png" width="128"><br><b>Ezee Money Tracker</b><br>Version 1.0.1 (22 Feb 2019)</p>
+						<h3>What's new in this version?</h3>
+						<ul>
+							<li>Editable transactions/activities</li>
+							<li>Preventing duplicated category names</li>
+							<li>Preventing duplicated account names</li>
+							<li>Transfer activity between accounts is possible</li>
+							<li>Some bug fixes</li>
+						</ul>
+						<h3>Previous versions</h3>
+						<ul>
+							<li>First release.</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="screen" id="about">
 			<div class="vbleft" >
 				<div class="block">
@@ -204,7 +234,7 @@
 						}
 						cat += "</select> or <u style='cursor: pointer;' onclick=ss('categories')>add new</u>"
 						$("#inorex").html("Income")
-						$("#itcontent").html("<div style='display: inline-block; vertical-align: top;'>Enter amount:<br><input id='amount' placeholder='Amount' style='color: gray' type='number'><br>Select category:<br>"+cat+"</div><div style='margin-left: 10px; display: inline-block; vertical-align: top;'><textarea id='note' placeholder='Notes' style='color: gray;'></textarea><br><button onclick=submitrec(1)>Add</button></div>")
+						$("#itcontent").html("<div style='display: inline-block; vertical-align: top;'>Enter amount:<br><input id='amount' placeholder='Amount' style='color: gray' type='number'><br>Select category:<br>"+cat+"</div><div style='margin-left: 10px; display: inline-block; vertical-align: top;'><textarea id='note' placeholder='Notes' style='color: gray; width: 256px;'></textarea><br><button onclick=submitrec(1)>Add</button></div>")
 						$("#inputtab").fadeIn()
 					}else{
 						ss("categories")
@@ -212,7 +242,7 @@
 						$("#inputtab").fadeOut()
 					}
 				}
-				else{
+				else if(n == 2){
 					if(appdata.catex.length > 0){
 						var cat = "<select id='category'>"
 						for(var i = 0; i < appdata.catex.length; i++){
@@ -220,13 +250,65 @@
 						}
 						cat += "</select> or <u style='cursor: pointer;' onclick=ss('categories')>add new</u>"
 						$("#inorex").html("Expense")
-						$("#itcontent").html("<div style='display: inline-block; vertical-align: top;'>Enter amount:<br><input id='amount' placeholder='Amount' style='color: gray' type='number'><br>Select category:<br>"+cat+"</div><div style='margin-left: 10px; display: inline-block; vertical-align: top;'><textarea id='note' placeholder='Notes' style='color: gray;'></textarea><br><button onclick=submitrec(2)>Add</button></div>")
+						$("#itcontent").html("<div style='display: inline-block; vertical-align: top;'>Enter amount:<br><input id='amount' placeholder='Amount' style='color: gray' type='number'><br>Select category:<br>"+cat+"</div><div style='margin-left: 10px; display: inline-block; vertical-align: top;'><textarea id='note' placeholder='Notes' style='color: gray; width: 256px;'></textarea><br><button onclick=submitrec(2)>Add</button></div>")
 						$("#inputtab").fadeIn()
 					}else{
 						ss("categories")
 						sAlert("You need to add a category.")
 					}
+				}else{
+					if(appdata.acc.length > 1){
+						var accs = "";
+						for(var i = 0; i < appdata.acc.length; i++){
+							accs += "<option>" + appdata.acc[i].name + "</option>"
+						}
+						$("#inorex").html("Transfer")
+						$("#itcontent").html("<div style='display: inline-block; vertical-align: top;'>Enter amount:<br><input id='amt' placeholder='Amount' style='color: gray' type='number'><br>From account <select id='transferacc1'>"+accs+"</select> to <select id='transferacc2'>"+accs+"</select><br><br><button onclick='proceedtransfer()'>Proceed</button></div>")
+						$("#inputtab").fadeIn()
+					}else{
+						sAlert("You need one more account to transfer to.")
+					}
 				}
+			}
+			
+			function proceedtransfer(){
+				var trac1 = refineinput($("#transferacc1").val())
+				var trac2 = refineinput($("#transferacc2").val())
+				var amt = $("#amt").val();
+				amt = parseFloat(refineinput(amt))
+				if(isNaN(amt))
+					amt = 0
+				if(trac1 == trac2){
+					sAlert("Transfer failed. Both accounts are same.")
+				}else{
+					if(amt != 0){
+					
+						var fromacc = accnametonum(trac1)
+						var fromaccin = appdata.acc[accnametonum(trac1)].tr.length
+						var toacc = accnametonum(trac2)
+						var toaccin = appdata.acc[accnametonum(trac2)].tr.length
+						
+						console.log("adding transfer from "+fromacc+" index "+fromaccin+" to " + toacc+ " index "+toaccin)
+						
+						appdata.acc[accnametonum(trac1)].tr.push({date : dt.getDate() + "/" + (dt.getMonth()+1) + "/" + dt.getFullYear(), amount : parseFloat("-"+amt), note : "Transfer", category : trac1 +" to " + trac2, transfer : { from : { acc : fromacc , index : fromaccin } , to : { acc : toacc , index : toaccin } } })
+						
+						appdata.acc[accnametonum(trac2)].tr.push({date : dt.getDate() + "/" + (dt.getMonth()+1) + "/" + dt.getFullYear(), amount : parseFloat(amt), note : "Transfer", category : trac1 +" to " + trac2, transfer : { from : { acc : fromacc , index : fromaccin } , to : { acc : toacc , index : toaccin } } })
+						sAlert("Succesfully transfered.")
+						savedata()
+						$("#inputtab").fadeOut()
+						openacc(currentaccount)
+					}else{
+						sAlert("You din't enter any amount.")
+					}
+				}
+			}
+			
+			function accnametonum(t){
+				for(var i = 0; i < appdata.acc.length; i++){
+					if(appdata.acc[i].name == t)
+						return i
+				}
+				return false
 			}
 			
 			var dt = new Date()
@@ -249,10 +331,19 @@
 			}
 			
 			function delacc(){
-				$("#dimpage").html("<div class='block'><h2>Delete Account</h2><p>Are you sure you are willing to delete this account?</p><div><button style='margin-right: 5px;' onclick='closedp()'>Cancel</button><button onclick='delaccok("+currentaccount+")'>Sure</button></div></div>").fadeIn()
+				$("#dimpage").html("<div class='block'><h2>Delete Account</h2><p>By deleting this account, any transfer activities involving this account will be deleted from Activites tables on the other accounts. Are you sure you are willing to delete this account?</p><div><button style='margin-right: 5px;' onclick='closedp()'>Cancel</button><button onclick='delaccok("+currentaccount+")'>Sure</button></div></div>").fadeIn()
 			}
 			
 			function delaccok(n){
+				//deleting transaction involved transfer from or to this account
+				for(var i = 0; i < appdata.acc.length; i++){
+					for(var z = 0; z < appdata.acc[i].tr.length; z++){
+						if(appdata.acc[i].tr[z].category.indexOf(appdata.acc[currentaccount].name) > -1){
+							appdata.acc[i].tr.splice(z, 1)
+						}
+					}
+				}
+				//delete the account itself
 				appdata.acc.splice(n, 1)
 				savedata()
 				ss("landing")
@@ -286,13 +377,37 @@
 					bl = 0
 				var sb = $("#cursymbol").val().substring(0,4)
 				if(nn != ""){
-					appdata.acc.push({ name : nn, bal : bl, symb : sb, tr : [] })
-					sAlert("New account created.")
-					savedata()
-					ss("landing")
+					if(isavailableAcc(nn)){
+						appdata.acc.push({ name : nn, bal : bl, symb : sb, tr : [] })
+						sAlert("New account created.")
+						savedata()
+						ss("landing")
+					}else{
+						sAlert("This name is already exist.")
+					}
 				}else{
 					sAlert("Please type a name.")
 				}
+			}
+			
+			function isavailableAcc(t){
+				for(var i = 0; i < appdata.acc.length; i++){
+					if(appdata.acc[i].name.toLowerCase() == t.toLowerCase())
+						return false
+				}
+				return true;
+			}
+			
+			function isavailableCat(t){
+				for(var i = 0; i < appdata.catin.length; i++){
+					if(appdata.catin[i].toLowerCase() == t.toLowerCase())
+						return false
+				}
+				for(var i = 0; i < appdata.catex.length; i++){
+					if(appdata.catex[i].toLowerCase() == t.toLowerCase())
+						return false
+				}
+				return true;
 			}
 		
 			function ss(id){
@@ -430,7 +545,7 @@
 					for(var i = appdata.acc[currentaccount].tr.length-1; i > -1; i--){
 					
 						if(appdata.acc[currentaccount].tr[i].date.split("/")[2] == y.toString() && appdata.acc[currentaccount].tr[i].date.split("/")[1] == m.toString()){
-							data += "<tr><td>"+appdata.acc[currentaccount].tr[i].date+"</td><td>"+appdata.acc[currentaccount].tr[i].category+"</td><td style='text-align: right;'>"+tsep(currentaccount, appdata.acc[currentaccount].tr[i].amount)+"</td><td>"+appdata.acc[currentaccount].tr[i].note+"</td></tr>"
+							data += "<tr><td><i onclick='edittrans("+i+")' class='fa fa-pencil-square-o' title='Edit' style='margin-right: 10px; cursor: pointer;'></i>"+appdata.acc[currentaccount].tr[i].date+"</td><td>"+appdata.acc[currentaccount].tr[i].category+"</td><td style='text-align: right;'>"+tsep(currentaccount, appdata.acc[currentaccount].tr[i].amount)+"</td><td>"+nl2br(appdata.acc[currentaccount].tr[i].note)+"</td></tr>"
 							
 							if(appdata.acc[currentaccount].tr[i].amount > 0){
 								totin += appdata.acc[currentaccount].tr[i].amount
@@ -572,12 +687,21 @@
 				return balance
 			}
 			
+			function nl2br(t){
+				return t.replace(/(?:\r\n|\r|\n)/g, '<br>')
+			}
+			
 			function addincat(){
-				if(refineinput($("#incat").val()) != ""){
-					appdata.catin.push(refineinput($("#incat").val()));
-					savedata()
-					ss("categories")
-					sAlert("New category added.")
+				var newname = refineinput($("#incat").val())
+				if(newname != ""){
+					if(isavailableCat(newname)){
+						appdata.catin.push(newname)
+						savedata()
+						ss("categories")
+						sAlert("New category added.")
+					}else{
+						sAlert("This category is already exist.")
+					}
 				}else{
 					sAlert("Type a category.")
 				}
@@ -591,11 +715,17 @@
 			}
 			
 			function addexcat(){
-				if(refineinput($("#excat").val()) != ""){
-					appdata.catex.push(refineinput($("#excat").val()));
-					savedata()
-					ss("categories")
-					sAlert("New category added.")
+				var newname = refineinput($("#excat").val())
+				if(newname != ""){
+					if(isavailableCat(newname)){
+						appdata.catex.push(newname)
+						savedata()
+						ss("categories")
+						sAlert("New category added.")
+					}else{
+						sAlert("This category is already exist.")
+					}
+					
 				}else{
 					sAlert("Type a category.")
 				}
@@ -640,6 +770,43 @@
 					$("#dimpage").fadeOut()
 					sAlert("Successfully updated.")
 				}
+			}
+			
+			function edittrans(i){
+				$("#dimpage").html("<h2>Edit</h2><p><b>Date:</b> "+appdata.acc[currentaccount].tr[i].date+"</p><p><b>Category:</b> "+appdata.acc[currentaccount].tr[i].category+"</p><p><b>Amount:</b></p><input id='newamountvalue' placeholder='Amount' value='"+appdata.acc[currentaccount].tr[i].amount+"'><p><b>Note:</b></p><textarea placeholder='Note' style='width: 256px;' id='newnotevalue'>"+appdata.acc[currentaccount].tr[i].note+"</textarea><div><button style='margin-right: 5px;' onclick='closedp()'>Cancel</button><button onclick='saveedittrans("+i+")' style='margin-right: 5px;'>Save</button><button style='background-color: white; color: red' onclick='deletetrans("+i+")'>Delete</button></div>").fadeIn()
+			}
+			
+			function saveedittrans(i){
+				var bl = $("#newamountvalue").val();
+				bl = parseFloat(refineinput(bl))
+				if(isNaN(bl))
+					bl = 0
+				appdata.acc[currentaccount].tr[i].amount = bl
+				appdata.acc[currentaccount].tr[i].note = refineinput($("#newnotevalue").val())
+				savedata()
+				$("#dimpage").fadeOut()
+				openacc(currentaccount)
+			}
+			
+			function deletetrans(i){
+				$("#dimpage").html("<h2>Are you sure?</h2><p>Are you sure you want to delete this entry?</p><button style='margin-right: 5px;' onclick='closedp()'>Cancel</button><button onclick='deletetransok("+i+")'>Yes, delete it.</button>").fadeIn()
+			}
+			
+			function deletetransok(i){
+				if(appdata.acc[currentaccount].tr[i].transfer != null){
+					var fromacc = appdata.acc[currentaccount].tr[i].transfer.from.acc
+					var fromaccin = appdata.acc[currentaccount].tr[i].transfer.from.index
+					var toacc = appdata.acc[currentaccount].tr[i].transfer.to.acc
+					var toaccin = appdata.acc[currentaccount].tr[i].transfer.to.index
+					console.log("deleting transfer from "+fromacc+" index "+fromaccin+" to " + toacc+ " index "+toaccin)
+					appdata.acc[fromacc].tr.splice(fromaccin, 1)
+					appdata.acc[toacc].tr.splice(toaccin, 1)
+				}else{
+					appdata.acc[currentaccount].tr.splice(i, 1)
+				}
+				savedata()
+				$("#dimpage").fadeOut()
+				openacc(currentaccount)
 			}
 			
 			function updatecatonrec(o, n){
@@ -738,6 +905,9 @@
 			})
 			ipcRenderer.on("help", (event, arg)=>{
 				ss("help")
+			})
+			ipcRenderer.on("vinfo", (event, arg)=>{
+				ss("vinfo")
 			})
 			
 			const { dialog } = require('electron').remote
