@@ -19,6 +19,6 @@
   "author": "Habibie",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^4.0.5"
+    "electron": "^7.2.4"
   }
 }
