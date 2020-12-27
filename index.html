@@ -13,6 +13,23 @@
 		<!-- Insert this line after script imports -->
 		<script>if (window.module) module = window.module;</script>
 		
+		<style>
+		
+			.themethumb{
+				display: inline-block;
+				vertical-align: top;
+				cursor: pointer;
+				padding: 5px;
+				margin: 5px;
+			}
+			
+			.themethumb:hover{
+				background-color: white;
+			}
+			
+		</style>
+		
+		
 	</head>
 	<body>
 		
@@ -26,6 +43,9 @@
 				</div>
 				<div class="block" style="padding-bottom: 0;">
 					<button class="btnround" onclick=ss("backrest") title="Backup and Restore"><i class="fa fa-floppy-o"></i></button>
+				</div>
+				<div class="block" style="padding-bottom: 0;">
+					<button class="btnround" onclick=ss("choosetheme") title="Theme"><i class="fa fa-paint-brush"></i></button>
 				</div>
 				<div class="block" style="padding-bottom: 0;">
 					<button class="btnround" onclick=ss("about") title="About"><i class="fa fa-question"></i></button>
@@ -121,6 +141,23 @@
 					<h2>Help</h2>
 					<p>Here is a video introducing and demonstrating how to use this program:</p>
 					<iframe width="560" height="315" src="https://www.youtube.com/embed/TwQ44UJiSIs" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+				</div>
+			</div>
+		</div>
+		<div class="screen" id="choosetheme">
+			<div class="vbleft" >
+				<div class="block">
+					<button class="btnround" onclick=ss("landing")><i class="fa fa-arrow-left"></i></button>
+				</div>
+			</div>
+			<div class="vbar">
+				<div class="block">
+					<h2>Themes</h2>
+					<p>Choose your desired theme:</p>
+					<div class="themethumb" onclick="setTheme(1)"><img src="themesthumbs/1.png" width="128"></div>
+					<div class="themethumb" onclick="setTheme(2)"><img src="themesthumbs/2.png" width="128"></div>
+					<div class="themethumb" onclick="setTheme(3)"><img src="themesthumbs/3.png" width="128"></div>
+					<div class="themethumb" onclick="setTheme(4)"><img src="themesthumbs/4.png" width="128"></div>
 				</div>
 			</div>
 		</div>
@@ -880,7 +917,10 @@
 					return appdata.acc[s].symb + " " + am
 			}
 			
+			
+			
 			//electron bridge
+			
 			const { ipcRenderer } = require("electron")
 			ipcRenderer.on("allaccounts", (event, arg)=>{
 				ss("landing")
@@ -912,6 +952,33 @@
 			
 			const { dialog } = require('electron').remote
 			function sofd(){
+				
+				dialog.showOpenDialog({
+					filters: [{ name: 'EMT', extensions: ['emt'] }]
+				}).then(result => {
+					var filelocation = result.filePaths[0];
+					console.log(filelocation);
+					var fs = require('fs')
+					fs.readFile(filelocation, function(err, buf) {
+						if(err){
+							sAlert("Invalid file.")
+						}else{
+							var newdata = JSON.parse(buf.toString())
+							if(newdata.acc !== undefined){
+								appdata = newdata
+								savedata()
+								sAlert("Data succesfully restored.")
+								setTimeout(function(){
+									location.reload()
+								}, 2000)
+							}else{
+								sAlert("Invalid file.")
+							}
+						}
+					});
+				});
+				
+				/*
 				dialog.showOpenDialog({
 					filters: [{ name: 'EMT', extensions: ['emt'] }],
 					properties: ['openFile']
@@ -938,9 +1005,32 @@
 						});
 					}
 				});
+				*/
 			}
 			
 			function saveb(){
+				var workingfile;
+				//const { dialog } = require('electron').remote;
+				const options = {}
+				dialog.showSaveDialog({
+					filters: [{ name: 'EMT', extensions: ['emt'] }]
+				}).then(result => {
+					//console.log(result.filePath);
+					workingfile = result.filePath;
+					//alert(workingfile);
+
+					var fs = require('fs')
+					fs.writeFile(workingfile, JSON.stringify(appdata), function(err, data) {
+						if(err){
+							sAlert("The file can't be saved.");
+						}
+						else{
+							sAlert("Succesfully backed up.");
+						}
+					});
+				});
+			
+				/*
 				dialog.showSaveDialog({
 					filters: [{ name: 'EMT', extensions: ['emt'] }]
 				}, function (files) {
@@ -958,6 +1048,7 @@
 						});
 					}
 				});
+				*/
 			}
 			
 			const shell = require('electron').shell;
@@ -966,6 +1057,8 @@
 				event.preventDefault();
 				shell.openExternal(this.href);
 			});
+			
+			
 		</script>
 	</body>
 </html>

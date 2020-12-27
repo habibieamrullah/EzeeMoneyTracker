@@ -1,16 +1,26 @@
-const { app, BrowserWindow, Menu } = require('electron')
+const { app, BrowserWindow, Menu } = require('electron');
 
-const gotTheLock = app.requestSingleInstanceLock()
+const gotTheLock = app.requestSingleInstanceLock();
+
 if (!gotTheLock) {
-	app.quit()
+	app.quit();
 } else {
-	app.on('ready', createWindow)
+	app.on('ready', createWindow);
 }
 
 function createWindow () {
-	// Create the browser window.
-	let win = new BrowserWindow({ width: 1024, height: 720 })
-
+	const win = new BrowserWindow({ 
+		width: 1024, 
+		height: 720 ,
+		webPreferences: { 
+		  nodeIntegration: true,
+		  enableRemoteModule: true,
+		}
+	});
+	//win.removeMenu();
+	win.loadFile('index.html');
+	//win.webContents.openDevTools();
+	
 	var menu = Menu.buildFromTemplate([{
 		label: 'Menu',
 		submenu: [
@@ -116,17 +126,9 @@ function createWindow () {
 	])
 	Menu.setApplicationMenu(menu); 
 	
-	// and load the index.html of the app.
-	win.loadFile('index.html')
-	
-	//prevent multiple instance
-	/* Single Instance Check */
-	
-	//end
 }
 
-//app.on('ready', createWindow)
 app.on('window-all-closed', () => {
-  app.quit()
+  app.quit();
 })
 
