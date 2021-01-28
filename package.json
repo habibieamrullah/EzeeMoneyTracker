@@ -27,7 +27,7 @@
     "concat-map": "^0.0.1",
     "detect-node": "^2.0.4",
     "concat-stream": "^1.6.2",
-    "electron": "^10.1.5",
+    "electron": "^10.2.0",
     "core-util-is": "^1.0.2",
     "decompress-response": "^3.3.0",
     "defer-to-connect": "^1.1.3",
