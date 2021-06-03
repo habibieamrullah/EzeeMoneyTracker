@@ -61,7 +61,7 @@
     "got": "^9.6.0",
     "graceful-fs": "^4.2.4",
     "has": "^1.0.3",
-    "hosted-git-info": "^2.8.8",
+    "hosted-git-info": "^2.8.9",
     "http-cache-semantics": "^4.1.0",
     "inflight": "^1.0.6",
     "inherits": "^2.0.4",
