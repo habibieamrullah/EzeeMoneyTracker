@@ -12,9 +12,11 @@ function createWindow () {
 	const win = new BrowserWindow({ 
 		width: 1024, 
 		height: 720 ,
+		icon: "icon.ico",
 		webPreferences: { 
 		  nodeIntegration: true,
 		  enableRemoteModule: true,
+		  contextIsolation: false,
 		}
 	});
 	//win.removeMenu();

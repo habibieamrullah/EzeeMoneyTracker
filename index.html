@@ -7,9 +7,12 @@
 		<!-- Insert this line above script imports  -->
 		<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
 		<script src="jquery.js"></script>
-		
-		<script src="utils.js"></script>
 		<script src="Chart.bundle.js"></script>
+		
+		<script src="xlsxcore.js"></script>
+        <script src="filesaver.js"></script>
+        <script src="tableexport.js"></script>
+		
 		<!-- Insert this line after script imports -->
 		<script>if (window.module) module = window.module;</script>
 		
@@ -27,8 +30,12 @@
 				background-color: white;
 			}
 			
+			
+			#dimpage{
+				backdrop-filter: blur(5px);
+			}
+			
 		</style>
-		
 		
 	</head>
 	<body>
@@ -195,8 +202,16 @@
 				<div class="block">
 					<h2>Version Info</h2>
 					<div style="display: inline-block; inline-block; vertical-align: top;">
-						<p><img src="icon.png" width="128"><br><b>Ezee Money Tracker</b><br>Version 1.0.1 (22 Feb 2019)</p>
+						<p><img src="icon.png" width="128"><br><b>Ezee Money Tracker</b><br>Version 1.0.2 (6 Jun 2021)</p>
 						<h3>What's new in this version?</h3>
+						<ul>
+							<li>Better table to CSV export feature</li>
+							<li>New nice icon</li>
+						</ul>
+						
+						<h3>Previous versions</h3>
+						
+						<h4>Version 1.0.1 (22 Feb 2019)</h4>
 						<ul>
 							<li>Editable transactions/activities</li>
 							<li>Preventing duplicated category names</li>
@@ -204,7 +219,8 @@
 							<li>Transfer activity between accounts is possible</li>
 							<li>Some bug fixes</li>
 						</ul>
-						<h3>Previous versions</h3>
+						
+						<h4>Version 1.0.0 (1 Feb 2019)</h4>
 						<ul>
 							<li>First release.</li>
 						</ul>
@@ -226,11 +242,9 @@
 					<h2>Disclaimer</h2>
 					<p>I am just a common programmer that love coding something useful for you. I've made this software as good as I could. However I can not guarantee that this software is bug/problem free. Please use this software at your own risk. I'm not responsible for any losses or damages caused by using this software.</p>
 					<h2>Contact</h2>
-					<p>Should you have any inquiry, please don't hesitate to contact me: <a href="mailto:habibie@ciihuy.com">habibie@ciihuy.com</a> or <a href="mailto:habibieamrullah@gmail.com">habibieamrullah@gmail.com</a></p>
+					<p>Should you have any inquiry, please don't hesitate to contact me: <a href="mailto:habibie@webappdev.com">habibie@webappdev.com</a> or <a href="mailto:habibieamrullah@gmail.com">habibieamrullah@gmail.com</a></p>
 					<h2>Support This Software Development</h2>
 					<p>I love coding. If you love using this free software, would you please help me to make it better by donating to my PayPal account? So I can still working on what I love to do. Here is the link: <a href="https://www.paypal.me/habibieamrullah">https://www.paypal.me/habibieamrullah</a></p>
-					<p>You can also become my Patron supporter at Patreon. Please click button below:</p>
-					<p align="center"><a href="https://www.patreon.com/ciihuy"><img src="patron.png" width="256"></a></p>
 				</div>
 			</div>
 		</div>
@@ -557,12 +571,27 @@
 				}
 			}
 			
+			function inittableexport(){
+				$("#texportbtns").html("");
+				$("#apptable").tableExport(
+					{
+						formats: ["xlsx", "csv", "txt"],  
+						headers: true,
+						
+					}
+				);
+				// Detach the `buttons` html
+				var $buttons = $("#apptable").find('caption').children().detach();
+				// Append the buttons to an element of your choosing
+				$buttons.appendTo('#texportbtns');
+			}
+			
 			function showtrans(y, m){
 				if(appdata.acc[currentaccount].tr.length > 0){
 				
 					var statdata = { in : [] , ex : [] }
 				
-					var data = "<p>"+mname(m.toString()) + " " + y.toString() + " Activities"+"</p><table><tr><th>Date</th><th>Category</th><th>Amount</th><th>Notes</th></tr>"
+					var data = "<p>"+mname(m.toString()) + " " + y.toString() + " Activities"+"</p><table id='apptable'><tr><th>Date</th><th>Category</th><th>Amount</th><th>Notes</th></tr>"
 					
 					function notexist(dat, cat){
 						if(dat.length > 0){
@@ -610,7 +639,11 @@
 							
 						}
 					}
-					$("#transactions").html(data + "</table><div style='text-align: right; font-size: 12px; padding-top: 10px;'>Total incomes: "+tsep(currentaccount, totin)+"<br>Total Expenses: "+tsep(currentaccount, totex)+"<br>Balance: "+tsep(currentaccount, totin+totex)+"</div>")
+					$("#transactions").html(data + "</table><div style='text-align: right; font-size: 12px; padding-top: 10px;'>Total incomes: "+tsep(currentaccount, totin)+"<br>Total Expenses: "+tsep(currentaccount, totex)+"<br>Balance: "+tsep(currentaccount, totin+totex)+"</div><div><div id='texportbtns' style='margin-bottom: 20px;'></div></div>")
+					
+					
+				    
+				    inittableexport();
 					
 					var dataamntin = []
 					var bgcol = []
