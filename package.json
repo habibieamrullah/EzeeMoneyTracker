@@ -103,7 +103,7 @@
     "path-type": "^2.0.0",
     "pend": "^1.2.0",
     "pify": "^3.0.0",
-    "plist": "^3.0.1",
+    "plist": "^3.0.4",
     "prepend-http": "^2.0.0",
     "process-nextick-args": "^2.0.1",
     "progress": "^2.0.3",
