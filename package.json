@@ -83,7 +83,7 @@
     "matcher": "^3.0.0",
     "mimic-response": "^1.0.1",
     "minimatch": "^3.0.4",
-    "minimist": "^1.2.5",
+    "minimist": "^1.2.6",
     "mkdirp": "^0.5.5",
     "ms": "^2.1.2",
     "normalize-package-data": "^2.5.0",
