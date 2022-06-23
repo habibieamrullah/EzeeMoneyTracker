@@ -58,7 +58,7 @@
     "global-agent": "^2.1.12",
     "global-tunnel-ng": "^2.7.1",
     "globalthis": "^1.0.1",
-    "got": "^9.6.0",
+    "got": "^11.8.5",
     "graceful-fs": "^4.2.4",
     "has": "^1.0.3",
     "hosted-git-info": "^2.8.8",
